@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --background: #05070b;
+  --foreground: #e8eef7;
+  --panel: #0b1018;
+  --panel-raised: #101826;
+  --border: #1c2a3d;
+  --muted: #8b9bb3;
+  --accent: #3ee0cf;
+  --critical: #ff4d5a;
+  --high: #ff8a3d;
+  --medium: #f5c542;
+  --low: #7aa2c8;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-raised: var(--panel-raised);
+  --color-border: var(--border);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-critical: var(--critical);
+  --color-high: var(--high);
+  --color-medium: var(--medium);
+  --color-low: var(--low);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+html,
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+@keyframes pulse-critical {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(255 77 90 / 0.55);
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgb(255 77 90 / 0);
+    opacity: 0.92;
+  }
+}
+
+@keyframes scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.pulse-critical {
+  animation: pulse-critical 1.8s ease-out infinite;
+}
+
+.map-scan::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgb(62 224 207 / 0.07),
+    transparent
+  );
+  animation: scan 7s linear infinite;
+  pointer-events: none;
+}
