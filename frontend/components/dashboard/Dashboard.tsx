@@ -1,10 +1,17 @@
 "use client";
+
 import { useEffect, useMemo, useState } from "react";
-import { useCommandCoreSocket } from "@/hooks/useCommandCoreSocket";
 import toast from "react-hot-toast";
-import { ROLE_LABELS, hasPermission, type UserRole } from "@/lib/security/rbac";
+
+import { useCommandCoreSocket } from "@/hooks/useCommandCoreSocket";
 import { useThreats } from "@/hooks/useThreats";
 import { dispatchInterception } from "@/lib/dispatch";
+import {
+  ROLE_LABELS,
+  hasPermission,
+  type UserRole,
+} from "@/lib/security/rbac";
+
 import { DispatchButton, type DispatchUiStatus } from "./DispatchButton";
 import { Header } from "./Header";
 import { StatsBar } from "./StatsBar";
@@ -14,21 +21,40 @@ import { ThreatSidebar } from "./ThreatSidebar";
 
 export function Dashboard() {
   useCommandCoreSocket();
+
   const { threats, status, isLoading, error } = useThreats();
-  const [selectedThreatId, setSelectedThreatId] = useState<string | null>(null);
-  const [dispatchStatus, setDispatchStatus] = useState<DispatchUiStatus>("idle");
+
+  const [selectedThreatId, setSelectedThreatId] = useState<string | null>(
+    null,
+  );
+
+  const [dispatchStatus, setDispatchStatus] =
+    useState<DispatchUiStatus>("idle");
+
   const [dispatchError, setDispatchError] = useState<string | null>(null);
-  const [selectedRole, setSelectedRole] = useState<UserRole>("POLICE_INVESTIGATOR");
-  const canDispatch = hasPermission(selectedRole, "dispatch:create");
+
+  const [selectedRole, setSelectedRole] = useState<UserRole>(
+    "POLICE_INVESTIGATOR",
+  );
+
+  const canDispatch = hasPermission(
+    selectedRole,
+    "dispatch:create",
+  );
+
   const selectedThreat = useMemo(
-    () => threats.find((threat) => threat.id === selectedThreatId) ?? null,
+    () =>
+      threats.find(
+        (threat) => threat.id === selectedThreatId,
+      ) ?? null,
     [threats, selectedThreatId],
   );
+
   useEffect(() => {
     const hasCriticalThreat = threats.some(
       (threat) => threat.risk === "CRITICAL",
     );
-  
+
     if (hasCriticalThreat) {
       toast.error("🚨 SPATIAL ANOMALY DETECTED", {
         position: "top-right",
@@ -56,9 +82,14 @@ export function Dashboard() {
     setDispatchError(null);
 
     const result = await dispatchInterception(selectedThreat);
+
     if (result.ok) {
       setDispatchStatus("success");
-      toast.success("✔ Interception Unit Dispatched via Twilio");
+
+      toast.success(
+        "✔ Interception Unit Dispatched via Twilio",
+      );
+
       return;
     }
 
@@ -69,80 +100,79 @@ export function Dashboard() {
   return (
     <div className="flex h-dvh flex-col bg-background">
       <Header status={status} />
-      <div className="flex items-center justify-between rounded-lg border bg-card p-3">
-<div className="rounded-lg border bg-card p-3">
-  <p className="mb-2 text-sm font-semibold">Security Status</p>
 
-  <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
-    <div className="rounded-md border p-2">
-      🔐 RBAC Active
-    </div>
+      {/* Security Role */}
+      <div className="flex items-center justify-between gap-3 rounded-lg border bg-card p-3">
+        <div>
+          <p className="text-sm font-medium">
+            Security Role
+          </p>
 
-    <div className="rounded-md border p-2">
-      🛡️ API Security
-    </div>
+          <p className="text-xs text-muted-foreground">
+            {ROLE_LABELS[selectedRole]}
+          </p>
+        </div>
 
-    <div className="rounded-md border p-2">
-      🔎 Audit Logging
-    </div>
+        <select
+          value={selectedRole}
+          onChange={(event) =>
+            setSelectedRole(
+              event.target.value as UserRole,
+            )
+          }
+          className="rounded-md border bg-background px-3 py-2 text-sm"
+        >
+          {(Object.keys(ROLE_LABELS) as UserRole[]).map(
+            (role) => (
+              <option key={role} value={role}>
+                {ROLE_LABELS[role]}
+              </option>
+            ),
+          )}
+        </select>
+      </div>
 
-    <div className="rounded-md border p-2">
-      #️⃣ SHA-256 Integrity
-    </div>
-
-    <div className="rounded-md border p-2">
-      👤 Role Protected
-    </div>
-  </div>
-</div>
-  <div>
-    <p className="text-sm font-medium">Security Role</p>
-    <p className="text-xs text-muted-foreground">
-      {ROLE_LABELS[selectedRole]}
-    </p>
-  </div>
-
-  <select
-    value={selectedRole}
-    onChange={(event) => setSelectedRole(event.target.value as UserRole)}
-    className="rounded-md border bg-background px-3 py-2 text-sm"
-  >
-    {(Object.keys(ROLE_LABELS) as UserRole[]).map((role) => (
-      <option key={role} value={role}>
-        {ROLE_LABELS[role]}
-      </option>
-    ))}
-  </select>
-</div>
+      {/* Main Dashboard */}
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:overflow-hidden lg:p-4">
-        <StatsBar threats={threats} isLoading={isLoading} />
-        <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.95fr)] lg:overflow-z">
-        <aside className="order-1 flex min-h-[400px] flex-col gap-3 lg:order-2 lg:min-h-0 lg:overflow-y-auto">
-            <ThreatSidebar
-              threats={threats}
-              selectedThreatId={selectedThreatId}
-              onSelectThreat={handleSelect}
-              isLoading={isLoading}
-              error={error}
-            />
-            <ThreatDetail threat={selectedThreat} />
-            {canDispatch ? (
-  <DispatchButton
-    threat={selectedThreat}
-    status={dispatchStatus}
-    error={dispatchError}
-    onDispatch={handleDispatch}
-  />
-) : (
-  <div className="rounded-lg border bg-card p-3 text-sm">
-    <p className="font-medium">Dispatch Access Restricted</p>
-    <p className="text-xs text-muted-foreground">
-      {ROLE_LABELS[selectedRole]} does not have permission to dispatch an interception unit.
-    </p>
-  </div>
-)}
-          </aside>
-          <div className="order-2 min-h-0 h-full lg:order-1">
+        {/* Security Status */}
+        <div className="rounded-lg border bg-card p-3">
+          <p className="mb-2 text-sm font-semibold">
+            Security Status
+          </p>
+
+          <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
+            <div className="rounded-md border p-2">
+              🔐 RBAC Active
+            </div>
+
+            <div className="rounded-md border p-2">
+              🛡️ API Security
+            </div>
+
+            <div className="rounded-md border p-2">
+              🔎 Audit Logging
+            </div>
+
+            <div className="rounded-md border p-2">
+              #️⃣ SHA-256 Integrity
+            </div>
+
+            <div className="rounded-md border p-2">
+              👤 Role Protected
+            </div>
+          </div>
+        </div>
+
+        <StatsBar
+          threats={threats}
+          isLoading={isLoading}
+        />
+
+        {/* Map + Threat List */}
+        <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.95fr)]">
+          
+          {/* Map */}
+          <div className="order-2 min-h-[500px] lg:order-1 lg:min-h-0">
             <ThreatMap
               threats={threats}
               selectedThreatId={selectedThreatId}
@@ -151,6 +181,44 @@ export function Dashboard() {
               error={error}
             />
           </div>
+
+          {/* Threat List / Details */}
+          <aside className="order-1 flex min-h-[400px] flex-col gap-3 overflow-y-auto lg:order-2 lg:min-h-0">
+            
+            <ThreatSidebar
+              threats={threats}
+              selectedThreatId={selectedThreatId}
+              onSelectThreat={handleSelect}
+              isLoading={isLoading}
+              error={error}
+            />
+
+            <ThreatDetail
+              threat={selectedThreat}
+            />
+
+            {/* Dispatch Security Check */}
+            {canDispatch ? (
+              <DispatchButton
+                threat={selectedThreat}
+                status={dispatchStatus}
+                error={dispatchError}
+                onDispatch={handleDispatch}
+              />
+            ) : (
+              <div className="rounded-lg border bg-card p-3 text-sm">
+                <p className="font-medium">
+                  Dispatch Access Restricted
+                </p>
+
+                <p className="text-xs text-muted-foreground">
+                  {ROLE_LABELS[selectedRole]} does not
+                  have permission to dispatch an
+                  interception unit.
+                </p>
+              </div>
+            )}
+          </aside>
         </div>
       </div>
     </div>
