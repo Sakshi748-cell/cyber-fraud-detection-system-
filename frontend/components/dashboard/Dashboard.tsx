@@ -70,6 +70,31 @@ export function Dashboard() {
     <div className="flex h-dvh flex-col bg-background">
       <Header status={status} />
       <div className="flex items-center justify-between rounded-lg border bg-card p-3">
+<div className="rounded-lg border bg-card p-3">
+  <p className="mb-2 text-sm font-semibold">Security Status</p>
+
+  <div className="grid grid-cols-2 gap-2 text-xs sm:grid-cols-5">
+    <div className="rounded-md border p-2">
+      🔐 RBAC Active
+    </div>
+
+    <div className="rounded-md border p-2">
+      🛡️ API Security
+    </div>
+
+    <div className="rounded-md border p-2">
+      🔎 Audit Logging
+    </div>
+
+    <div className="rounded-md border p-2">
+      #️⃣ SHA-256 Integrity
+    </div>
+
+    <div className="rounded-md border p-2">
+      👤 Role Protected
+    </div>
+  </div>
+</div>
   <div>
     <p className="text-sm font-medium">Security Role</p>
     <p className="text-xs text-muted-foreground">
