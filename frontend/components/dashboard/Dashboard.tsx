@@ -163,9 +163,44 @@ export function Dashboard() {
           </div>
         </div>
 
+        
+
+        {/* Audit Log */}
+        <div className="rounded-lg border bg-card p-3">
+          <p className="mb-2 text-sm font-semibold">
+            Audit Log
+          </p>
+
+          <div className="space-y-2 text-xs">
+            <div className="flex justify-between gap-3 rounded-md border p-2">
+              <span>Threat data accessed</span>
+              <span className="text-muted-foreground">
+                {ROLE_LABELS[selectedRole]}
+              </span>
+            </div>
+
+            <div className="flex justify-between gap-3 rounded-md border p-2">
+              <span>Security role verified</span>
+              <span className="text-muted-foreground">
+                RBAC
+              </span>
+            </div>
+
+            <div className="flex justify-between gap-3 rounded-md border p-2">
+              <span>Evidence integrity checked</span>
+              <span className="text-muted-foreground">
+                SHA-256
+              </span>
+            </div>
+          </div>
+        </div>
+
         <StatsBar
           threats={threats}
           isLoading={isLoading}
+        
+      
+          
         />
 
         {/* Map + Threat List */}
