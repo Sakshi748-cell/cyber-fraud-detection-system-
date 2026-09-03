@@ -1,82 +1,60 @@
 Security Architecture
 
-
-
-\## 1. Project Overview
-
-
+# 1. Project Overview
 
 The Cyber Fraud Detection System is designed to support proactive detection and intervention for suspicious financial activity.
 
-
-
 The system uses:
 
-\- Data sources from authorized financial and complaint systems
+ Data sources from authorized financial and complaint systems
 
-\- API Gateway
+ API Gateway
 
-\- Data Processing Layer
+ Data Processing Layer
 
-\- ML Prediction Engine
+ ML Prediction Engine
 
-\- Risk Scoring Engine
+ Risk Scoring Engine
 
-\- Secure Database
+ Secure Database
 
-\- GIS Dashboard
+ GIS Dashboard
 
-\- Alert and Intervention System
+ Alert and Intervention System
 
-\- Authorized communication with Police, Banks/FIs and I4C
-
-
+ Authorized communication with Police, Banks/FIs and I4C
 
 Security is designed into every layer using a defense-in-depth and least-privilege approach.
 
+--
 
-
-\---
-
-
-
-\## 2. Security Objectives
-
-
+# 2. Security Objectives
 
 The system must protect:
 
+1 Confidentiality – sensitive financial and personal data must only be accessible to authorized users.
 
+2 Integrity – fraud records, predictions, alerts and evidence must not be altered without authorization.
 
-1\. Confidentiality – sensitive financial and personal data must only be accessible to authorized users.
+3 Availability – authorized investigators should be able to access the system when required.
 
-2\. Integrity – fraud records, predictions, alerts and evidence must not be altered without authorization.
+4 Accountability – important actions must be recorded in tamper-evident audit logs.
 
-3\. Availability – authorized investigators should be able to access the system when required.
+5 Privacy – only the minimum required personal and financial information should be exposed.
 
-4\. Accountability – important actions must be recorded in tamper-evident audit logs.
+6 Evidence Integrity – digital evidence should be verifiable using cryptographic hashes.
 
-5\. Privacy – only the minimum required personal and financial information should be exposed.
+--
 
-6\. Evidence Integrity – digital evidence should be verifiable using cryptographic hashes.
-
-
-
-\---
-
-
-
-\## 3. Proposed Secure Architecture
-
-
+# 3. Proposed Secure Architecture
 
 ```text
 
 Authorized Data Sources
 
-&#x20;       |
+        |
 
-&#x20;       v
+        v
 
 +----------------------+
 
@@ -88,9 +66,9 @@ Authorized Data Sources
 
 +----------+-----------+
 
-&#x20;          |
+           |
 
-&#x20;          v
+           v
 
 +----------------------+
 
@@ -104,9 +82,9 @@ Authorized Data Sources
 
 +----------+-----------+
 
-&#x20;          |
+           |
 
-&#x20;          v
+           v
 
 +----------------------+
 
@@ -118,9 +96,9 @@ Authorized Data Sources
 
 +----------+-----------+
 
-&#x20;          |
+           |
 
-&#x20;          v
+           v
 
 +----------------------+
 
@@ -132,9 +110,9 @@ Authorized Data Sources
 
 +----------+-----------+
 
-&#x20;          |
+           |
 
-&#x20;          v
+           v
 
 +----------------------+
 
@@ -146,23 +124,23 @@ Authorized Data Sources
 
 +----------+-----------+
 
-&#x20;          |
+           |
 
-&#x20;    +-----+------+
+     +-----+------+
 
-&#x20;    |            |
+     |            |
 
-&#x20;    v            v
+     v            v
 
 GIS Dashboard   Alert System
 
-&#x20;    |            |
+     |            |
 
-&#x20;    +-----+------+
+     +-----+------+
 
-&#x20;          |
+           |
 
-&#x20;          v
+           v
 
 Authorized Police / Banks / FIs / I4C
 
@@ -244,31 +222,14 @@ Strong password policies where passwords are used
 
 Role-Based Access Control
 
-Role
 
-Access
-
-System Administrator
-
-System configuration and user management
-
-Police Investigator
-
-Assigned fraud cases, alerts and investigation information
-
-Bank/FI Analyst
-
-Authorized financial alerts and relevant transaction information
-
-I4C/Central Analyst
-
-Cross-source analysis and authorized intelligence
-
-Auditor
-
-Audit logs and security records
-
-Users should receive only the permissions required for their role.
+| Role | Main Permissions | Restricted From |
+|---|---|---|
+| System Administrator | Manage users, roles, system configuration and security settings | Cannot view unnecessary investigation data |
+| Police Investigator | View assigned cases, alerts, risk scores and relevant investigation data | Cannot manage system-wide users or security settings |
+| Bank/FI Analyst | View authorized financial alerts and relevant transaction information | Cannot access unrelated police investigations |
+| I4C/Central Analyst | Access authorized cross-source intelligence and aggregated risk information | Cannot access data outside assigned authorization |
+| Auditor | View audit logs, security events and compliance records | Cannot modify operational data or audit records |
 
 6\. Encryption
 
@@ -458,21 +419,21 @@ A safer design is:
 
 Sensitive Evidence
 
-&#x20;      |
+       |
 
-&#x20;      v
+       v
 
 Encrypted Secure Storage
 
-&#x20;      |
+       |
 
-&#x20;      +---- SHA-256 Hash ----+
+       +---- SHA-256 Hash ----+
 
-&#x20;                             |
+                              |
 
-&#x20;                             v
+                              v
 
-&#x20;                   Tamper-Evident Ledger
+                    Tamper-Evident Ledger
 
 The ledger stores proof of integrity rather than the sensitive data itself.
 
@@ -697,4 +658,6 @@ The system combines:
 Prediction + Risk Scoring + GIS Intelligence + Secure Access + Auditability + Evidence Integrity
 
 This helps authorized agencies act proactively while reducing the risk of unauthorized access, data leakage and evidence manipulation.
+
+```
 
