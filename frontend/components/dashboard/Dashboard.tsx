@@ -1,6 +1,7 @@
 "use client";
-
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useCommandCoreSocket } from "@/hooks/useCommandCoreSocket";
+import toast from "react-hot-toast";
 import { ROLE_LABELS, hasPermission, type UserRole } from "@/lib/security/rbac";
 import { useThreats } from "@/hooks/useThreats";
 import { dispatchInterception } from "@/lib/dispatch";
@@ -12,17 +13,33 @@ import { ThreatMap } from "./ThreatMap";
 import { ThreatSidebar } from "./ThreatSidebar";
 
 export function Dashboard() {
+  useCommandCoreSocket();
   const { threats, status, isLoading, error } = useThreats();
   const [selectedThreatId, setSelectedThreatId] = useState<string | null>(null);
   const [dispatchStatus, setDispatchStatus] = useState<DispatchUiStatus>("idle");
   const [dispatchError, setDispatchError] = useState<string | null>(null);
   const [selectedRole, setSelectedRole] = useState<UserRole>("POLICE_INVESTIGATOR");
   const canDispatch = hasPermission(selectedRole, "dispatch:create");
-
   const selectedThreat = useMemo(
     () => threats.find((threat) => threat.id === selectedThreatId) ?? null,
     [threats, selectedThreatId],
   );
+  useEffect(() => {
+    const hasCriticalThreat = threats.some(
+      (threat) => threat.risk === "CRITICAL",
+    );
+  
+    if (hasCriticalThreat) {
+      toast.error("🚨 SPATIAL ANOMALY DETECTED", {
+        position: "top-right",
+        style: {
+          background: "#111827",
+          color: "#ffffff",
+          border: "1px solid #ef4444",
+        },
+      });
+    }
+  }, [threats]);
 
   function handleSelect(id: string) {
     setSelectedThreatId(id);
@@ -41,6 +58,7 @@ export function Dashboard() {
     const result = await dispatchInterception(selectedThreat);
     if (result.ok) {
       setDispatchStatus("success");
+      toast.success("✔ Interception Unit Dispatched via Twilio");
       return;
     }
 
