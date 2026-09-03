@@ -50,8 +50,8 @@ export function Dashboard() {
       <Header status={status} />
       <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-3 lg:overflow-hidden lg:p-4">
         <StatsBar threats={threats} isLoading={isLoading} />
-        <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.95fr)] lg:overflow-hidden">
-          <aside className="order-1 flex min-h-0 flex-col gap-3 lg:order-2 lg:overflow-y-auto">
+        <div className="grid min-h-0 flex-1 gap-3 lg:grid-cols-[minmax(0,1.7fr)_minmax(320px,0.95fr)] lg:overflow-z">
+        <aside className="order-1 flex min-h-[400px] flex-col gap-3 lg:order-2 lg:min-h-0 lg:overflow-y-auto">
             <ThreatSidebar
               threats={threats}
               selectedThreatId={selectedThreatId}
